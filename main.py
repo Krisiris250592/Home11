@@ -1,10 +1,11 @@
 from collections import UserDict
 from datetime import datetime
 
+
 class Field:
     def __init__(self, value):
         self.value = value
-        #self.__value = value
+        # self.__value = value
 
     @property
     def value(self):
@@ -54,8 +55,6 @@ class Birthday(Field):
             pass
 
 
-
-
 class Record:
     def __init__(self, name_):
         self.name = Name(name_)
@@ -77,11 +76,10 @@ class Record:
             if birthday == current_day:
                 days = 0
             elif birthday < current_day:
-                days = (birthday.replace(year=current_day.year+1) - current_day).days
+                days = (birthday.replace(year=current_day.year + 1) - current_day).days
             else:
                 days = (birthday.replace(year=current_day.year) - current_day).days
             return days
-
 
     def find_phone(self, phone_number):
         for phone in self.phones:
@@ -103,21 +101,24 @@ class Record:
 
     def __str__(self):
         return (f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, "
-                f"birthday: {self.birthday.value if self.birthday else 'no' }")
+                f"birthday: {self.birthday.value if self.birthday else 'no'}")
 
 
 class AddressBook(UserDict):
 
     def iterator(self, n: int = 2):
-        result = ""
+        result = f"{'-' * 50}\n"
         count = 0
+        id_ = 0
         for name, record in self.data.items():
-            result += f"{name}: {record}\n"
+            result += f"{id_}: {record}\n"
+            id_ += 1
             count += 1
-            if count == n:
+            if count >= n:
                 yield result
                 count = 0
-                result = ""
+                result = f"{'-' * 50}\n"
+        yield result
 
     def add_record(self, record_: Record):
         self.data[record_.name.value] = record_
@@ -144,10 +145,9 @@ if __name__ == "__main__":
     john1_record.add_phone("5555555555")
     john1_record.add_birthday("29-04-1992")
 
-
-
     # Додавання запису John до адресної книги
     book.add_record(john_record)
+    book.add_record(john1_record)
 
     # Створення та додавання нового запису для Jane
     jane_record = Record("Jane")
@@ -171,11 +171,7 @@ if __name__ == "__main__":
 
     # Видалення запису Jane
     book.delete("Jane")
+
     gen = book.iterator(2)
     r = next(gen)
     print(r)
-
-
-
-
-
